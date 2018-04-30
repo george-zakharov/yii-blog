@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\EntryForm; // TODO: TEST
 
 class SiteController extends Controller
 {
@@ -47,8 +48,8 @@ class SiteController extends Controller
                 'class' => 'yii\web\ErrorAction',
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'class'             => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode'   => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
     }
@@ -78,6 +79,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
+
         return $this->render('login', [
             'model' => $model,
         ]);
@@ -133,5 +135,16 @@ class SiteController extends Controller
     public function actionSay($message = 'Hi there')
     {
         return $this->render('say', ['message' => $message]);
+    }
+
+    public function actionEntry()
+    {
+        $model = new EntryForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            return $this->render('entry-confirm', ['model' => $model]);
+        }
+
+        return $this->render('entry', ['model' => $model]);
     }
 }
